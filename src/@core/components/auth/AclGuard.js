@@ -19,7 +19,6 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Util Import
-import getHomeRoute from 'src/layouts/components/acl/getHomeRoute'
 
 const AclGuard = props => {
   // ** Props
@@ -33,8 +32,7 @@ const AclGuard = props => {
   let ability
   useEffect(() => {
     if (auth.user && auth.user.role && !guestGuard && router.route === '/') {
-      const homeRoute = getHomeRoute(auth.user.role)
-      router.replace(homeRoute)
+      router.replace('/home')
     }
   }, [auth.user, guestGuard, router])
 
@@ -49,6 +47,7 @@ const AclGuard = props => {
   // If guest guard or no guard is true or any error page
   if (guestGuard || router.route === '/404' || router.route === '/500' || !authGuard) {
     // If user is logged in and his ability is built
+
     if (auth.user && ability) {
       return <AbilityContext.Provider value={ability}>{children}</AbilityContext.Provider>
     } else {
@@ -56,6 +55,8 @@ const AclGuard = props => {
       return <>{children}</>
     }
   }
+  console.log(ability + ' TTT')
+  console.log(aclAbilities.subject + ' TTTA')
 
   // Check the access of current user and render pages
   if (ability && auth.user && ability.can(aclAbilities.action, aclAbilities.subject)) {

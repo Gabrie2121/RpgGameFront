@@ -3,13 +3,12 @@ import { AbilityBuilder, Ability } from '@casl/ability'
 export const AppAbility = Ability
 
 const defineRulesFor = (role, subject) => {
-  const { can, rules } = new AbilityBuilder(AppAbility)
+  const { can, cannot, rules } = new AbilityBuilder(AppAbility)
   if (role === 'admin') {
     can('manage', 'all')
-  } else if (role === 'client') {
-    can(['read'], 'acl-page')
   } else {
-    can(['read', 'create', 'update', 'delete'], subject)
+    can('manage', 'all')
+    cannot('read', 'itens-page')
   }
 
   return rules
