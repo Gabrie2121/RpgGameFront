@@ -24,6 +24,7 @@ import HttpClient from 'src/configs/httpClient'
 import Link from 'next/link'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { styled, useTheme } from '@mui/material/styles'
+import { useRouter } from 'next/router'
 
 const RegisterIllustrationWrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(20),
@@ -87,6 +88,7 @@ const Register = () => {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false)
   const [errorDialogOpen, setErrorDialogOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const router = useRouter()
 
   const onSubmit = data => {
     const { username, email } = data
@@ -100,6 +102,11 @@ const Register = () => {
       .then(response => {
         console.log(response)
         setSuccessDialogOpen(true)
+        setInterval(() => {
+          const redirectURL = '/login'
+
+          router.replace(redirectURL)
+        }, 1000)
       })
       .catch(error => {
         console.log('erro ao gerar', error)

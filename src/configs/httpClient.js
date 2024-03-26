@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const HttpClient = axios.create({ baseURL: 'http://localhost:8080/api' })
+const HttpClient = axios.create({ baseURL: 'http://177.85.121.34:8080/api' })
 
 HttpClient.interceptors.request.use(config => {
   config.headers['Content-Type'] = 'application/json'
@@ -13,7 +13,7 @@ HttpClient.interceptors.request.use(config => {
   const token = localStorage.getItem('accessToken')
 
   if (token) {
-    config.headers.Authorization = `${token}`
+    config.headers.Authorization = `Bearer ${token}`
   }
 
   return config

@@ -9,6 +9,7 @@ import axios from 'axios'
 
 // ** Config
 import authConfig from 'src/configs/auth'
+import HttpClient from 'src/configs/httpClient'
 
 // ** Defaults
 const defaultProvider = {
@@ -30,31 +31,39 @@ const AuthProvider = ({ children }) => {
   const router = useRouter()
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      if (storedToken) {
-        setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
+      try {
+        const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+
+        if (storedToken) {
+          setLoading(true)
+          setLoading(false)
+          console.log('deu erro aqui?')
+
+          HttpClient.get('/me').then(async response => {
+            console.log(response)
             setLoading(false)
-            setUser({ ...response.data.userData })
+            setUser({
+              id: response.data.id,
+              role: response.data.role,
+              username: response.data.username,
+              email: response.data.email
+            })
           })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
-      } else {
+        } else {
+          setLoading(false)
+        }
+      } catch (e) {
+        console.log(e)
+
+        localStorage.removeItem('userData')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('accessToken')
+
         setLoading(false)
+
+        if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+          router.replace('/login')
+        }
       }
     }
     initAuth()
@@ -65,13 +74,28 @@ const AuthProvider = ({ children }) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        console.log(response)
-        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data)
-        const returnUrl = router.query.returnUrl
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-        const redirectURL = '/home'
-        router.replace(redirectURL)
+        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token)
+        console.log('fez login')
+
+        HttpClient.get('/me').then(res => {
+          console.log(res)
+
+          window.localStorage.setItem(
+            'userData',
+            JSON.stringify({
+              id: res.data.id,
+              role: res.data.role,
+              username: res.data.username,
+              email: res.data.email
+            })
+          )
+          console.log('redireciona')
+          const redirectURL = '/home'
+
+          router.replace(redirectURL)
+
+          router.reload()
+        })
       })
       .catch(err => {
         if (errorCallback) errorCallback(err)
