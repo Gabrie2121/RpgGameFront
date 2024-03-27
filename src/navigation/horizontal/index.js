@@ -5,9 +5,14 @@ const navigation = () => [
     icon: 'mdi:home-outline'
   },
   {
-    title: 'Itens',
-    path: '/itens',
-    icon: 'mdi:email-outline'
+    title: 'Painel',
+    icon: 'mdi:file-document-outline',
+    children: [
+      {
+        title: 'Itens',
+        path: '/panel/list'
+      }
+    ]
   },
   {
     path: '/acl',

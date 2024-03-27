@@ -39,16 +39,26 @@ const AuthProvider = ({ children }) => {
           setLoading(false)
           console.log('deu erro aqui?')
 
-          HttpClient.get('/me').then(async response => {
-            console.log(response)
-            setLoading(false)
-            setUser({
-              id: response.data.id,
-              role: response.data.role,
-              username: response.data.username,
-              email: response.data.email
+          HttpClient.get('/me')
+            .then(async response => {
+              console.log(response)
+              setLoading(false)
+              setUser({
+                id: response.data.id,
+                role: response.data.role,
+                username: response.data.username,
+                email: response.data.email
+              })
             })
-          })
+            .catch(e => {
+              localStorage.removeItem('userData')
+              localStorage.removeItem('accessToken')
+              setLoading(true)
+              setLoading(false)
+              console.log(e)
+              router.replace('/login')
+              router.reload()
+            })
         } else {
           setLoading(false)
         }

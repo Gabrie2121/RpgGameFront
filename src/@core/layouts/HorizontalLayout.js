@@ -20,6 +20,7 @@ import AppBarContent from './components/horizontal/app-bar-content'
 
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
+import Sidebar from 'src/layouts/Sidebar'
 
 const HorizontalLayoutWrapper = styled('div')({
   height: '100%',
@@ -85,6 +86,7 @@ const HorizontalLayout = props => {
 
   return (
     <HorizontalLayoutWrapper className='layout-wrapper'>
+      <Sidebar />
       <MainContentWrapper className='layout-content-wrapper' sx={{ ...(contentHeightFixed && { maxHeight: '100vh' }) }}>
         {/* Navbar (or AppBar) and Navigation Menu Wrapper */}
         <AppBar
